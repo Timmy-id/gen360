@@ -21,12 +21,8 @@ export const {
   REDIS_URL,
   SERVER_URL,
   LOCAL_SERVER_URL,
+  FRONTEND_URL,
   CLOUD_NAME,
-  API_KEY,
-  API_SECRET,
-  PAYSTACK_SECRET_KEY,
-  PAYSTACK_PUBLIC_KEY,
-  PAYSTACK_INITIALIZE_URL,
 } = process.env;
 
 export const CREDENTIALS = process.env.CREDENTIALS === 'true';

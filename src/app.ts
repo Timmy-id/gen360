@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import { ErrorHandler, NotFoundError } from './middlewares';
 import hrRoutes from './modules/hr';
+import companyRoutes from './modules/company';
 
 export const App = async () => {
   const app: Application = express();
@@ -14,10 +15,8 @@ export const App = async () => {
   app.use(cookieParser());
   app.use(morgan('dev'));
 
-  app.use('/api/v1/hr', hrRoutes);
-  //   app.use('/api/v1/tables', tableRoutes);
-  //   app.use('/api/v1/auth', authRoutes);
-  //   app.use('/api/v1/orders', orderRoutes);
+  app.use('/api/v1/hr', hrRoutes); 
+  app.use('/api/v1/companies', companyRoutes); 
 
   app.use(NotFoundError);
   app.use(ErrorHandler);
