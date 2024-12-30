@@ -49,12 +49,11 @@ export class CompanyController {
   ) => {
     try {
       const { email } = req.query;
-      const invite = await this.companyService.acceptInvite(email);
+      await this.companyService.acceptInvite(email);
 
       res.status(200).json({
         success: true,
         message: 'Invitation accepted successfully.',
-        data: invite,
       });
     } catch (error: any) {
       next(error);

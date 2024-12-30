@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import { MailerService } from '../../services/mailerService';
 import { AppError } from '../../utils';
 import { IHRInvite } from '../invite/invite.interface';
@@ -22,7 +23,13 @@ export class CompanyService {
       );
     }
 
-    const newCompany = await Company.create(companyData);
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(companyData.password, salt);
+
+    const newCompany = await Company.create({
+      ...companyData,
+      password: hashPassword,
+    });
     return newCompany;
   }
   public async sendInviteToHR(hrData: IHRInvite): Promise<IHRInvite> {
@@ -45,7 +52,7 @@ export class CompanyService {
     });
 
     for (const hr of hrData.hrEmails) {
-      const inviteLink = `${FRONTEND_URL}/hr-invite/accept?email=${hr.email}`;
+      const inviteLink = `${FRONTEND_URL}/companies/hr-invites/accept?email=${hr.email}`;
       const subject = "You're Invited to Join Our Team!";
       const html = `<p>Hi,</p><p>You have been invited to join our company. Click the link below to accept the invitation:</p><p><a href="${inviteLink}">Accept Invitation</a></p>`;
       await this.mailerService.sendMail(hr.email, subject, html);

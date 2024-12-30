@@ -1,7 +1,8 @@
 export interface IBase {
-  email: String;
-  password: String;
-  phone: String;
+  email: string;
+  password: string;
+  phone: string;
+  refreshTokens?: string[];
   createdAt?: Date;
   updatedAt?: Date;
 }
