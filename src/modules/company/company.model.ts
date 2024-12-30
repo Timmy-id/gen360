@@ -10,4 +10,4 @@ const companyFields: SchemaDefinition = {
 
 const CompanySchema = mergeSchemas(baseFields, companyFields);
 
-export const Company = model<ICompany>('Hr', CompanySchema);
+export const Company = model<ICompany>('Company', CompanySchema);

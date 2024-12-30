@@ -43,7 +43,7 @@ export class CompanyService {
         status: 'Pending',
       })),
     });
-    
+
     for (const hr of hrData.hrEmails) {
       const inviteLink = `${FRONTEND_URL}/hr-invite/accept?email=${hr.email}`;
       const subject = "You're Invited to Join Our Team!";
@@ -51,5 +51,29 @@ export class CompanyService {
       await this.mailerService.sendMail(hr.email, subject, html);
     }
     return newInvite;
+  }
+
+  public async acceptInvite(email: any): Promise<IHRInvite> {
+    const hrInvite = await HRInvite.findOne({
+      'hrEmails.email': email,
+    });
+
+    if (!hrInvite) {
+      throw new AppError(400, 'You have not been invited');
+    }
+
+    const status = hrInvite.hrEmails[0].status;
+
+    if (status === 'Accepted') {
+      throw new AppError(400, 'You have already accepted our invitation');
+    }
+
+    hrInvite.hrEmails[0].status = 'Accepted';
+    await hrInvite.save();
+    const subject = 'You have Accepted to Join Our Team!';
+    const html = `<p>Hi,</p><p>You have accepted to join our company.</p>`;
+    await this.mailerService.sendMail(email, subject, html);
+
+    return hrInvite;
   }
 }

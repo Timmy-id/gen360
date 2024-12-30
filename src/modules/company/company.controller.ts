@@ -22,4 +22,42 @@ export class CompanyController {
       next(error);
     }
   };
+
+  public sendInviteToHr = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const inviteData = req.body;
+      const invite = await this.companyService.sendInviteToHR(inviteData);
+
+      res.status(201).json({
+        success: true,
+        message: 'Invitation sent successfully.',
+        data: invite,
+      });
+    } catch (error: any) {
+      next(error);
+    }
+  };
+
+  public acceptInvite = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { email } = req.query;
+      const invite = await this.companyService.acceptInvite(email);
+
+      res.status(200).json({
+        success: true,
+        message: 'Invitation accepted successfully.',
+        data: invite,
+      });
+    } catch (error: any) {
+      next(error);
+    }
+  };
 }

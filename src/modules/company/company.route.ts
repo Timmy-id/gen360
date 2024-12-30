@@ -12,4 +12,7 @@ router.post(
   companyController.registerCompany,
 );
 
+router.post('/hr-invites', companyController.sendInviteToHr);
+router.get('/hr-invites/accept', companyController.acceptInvite);
+
 export default router;
