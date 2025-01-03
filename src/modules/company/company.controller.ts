@@ -29,8 +29,12 @@ export class CompanyController {
     next: NextFunction,
   ) => {
     try {
+      const { id } = req.user;
       const inviteData = req.body;
-      const invite = await this.companyService.sendInviteToHR(inviteData);
+      const invite = await this.companyService.sendInviteToHR({
+        ...inviteData,
+        sender: id,
+      });
 
       res.status(201).json({
         success: true,

@@ -9,3 +9,7 @@ export const generateToken = (
     ...(Boolean(options) && options),
   });
 };
+
+export const verifyToken = (token: string, key: string) => {
+  return jwt.verify(token, key);
+};

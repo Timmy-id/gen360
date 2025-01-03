@@ -1,5 +1,6 @@
+import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
-import { AppError, generateToken } from '../../utils';
+import { AppError, generateToken, verifyToken } from '../../utils';
 import { MailerService } from '../../services';
 import { Company } from '../company';
 import { IAuth } from './auth.interface';
@@ -35,7 +36,7 @@ export class AuthService {
     }
 
     const accessToken = generateToken(
-      companyExist.id,
+      { id: companyExist._id },
       ACCESS_TOKEN_KEY as string,
       {
         expiresIn: ACCESS_TOKEN_EXPIRESIN,
@@ -43,20 +44,44 @@ export class AuthService {
     );
 
     const refreshToken = generateToken(
-      companyExist.id,
+      { id: companyExist._id },
       REFRESH_TOKEN_KEY as string,
       {
         expiresIn: REFRESH_TOKEN_EXPIRESIN,
       },
     );
 
-    companyExist.refreshTokens?.push(refreshToken);
+    companyExist.refreshToken = refreshToken;
     await companyExist.save();
 
     return { accessToken, refreshToken };
   }
 
-  public async refreshAccessToken(refreshToken: string): Promise<string | null> {
+  public async refreshAccessToken(
+    refreshToken: string,
+  ): Promise<string | null> {
+    try {
+      const payload = verifyToken(refreshToken, REFRESH_TOKEN_KEY as string);
+      const company = await Company.findById(payload);
 
+      if (!company || company.refreshToken !== refreshToken) {
+        return null;
+      }
+
+      return generateToken({ id: company._id }, ACCESS_TOKEN_KEY as string, {
+        expiresIn: ACCESS_TOKEN_EXPIRESIN,
+      });
+    } catch {
+      return null;
+    }
+  }
+
+  public async logout(companyId: string): Promise<void> {
+    const company = await Company.findById(companyId);
+
+    if (company) {
+      company.refreshToken = '';
+      company.save();
+    }
   }
 }

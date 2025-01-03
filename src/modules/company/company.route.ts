@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { validateRequest } from '../../middlewares';
+import { auth, validateRequest } from '../../middlewares';
 import { companyRegValidationSchema } from './company.validations';
 import { CompanyController } from './company.controller';
 
@@ -12,7 +12,7 @@ router.post(
   companyController.registerCompany,
 );
 
-router.post('/hr-invites', companyController.sendInviteToHr);
+router.post('/hr-invites', auth, companyController.sendInviteToHr);
 router.get('/hr-invites/accept', companyController.acceptInvite);
 
 export default router;
