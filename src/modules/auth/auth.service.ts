@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
+import { JwtPayload } from 'jsonwebtoken';
 import { AppError, generateToken, verifyToken } from '../../utils';
 import { MailerService } from '../../services';
 import { Company } from '../company';
@@ -10,6 +11,10 @@ import {
   REFRESH_TOKEN_EXPIRESIN,
   REFRESH_TOKEN_KEY,
 } from '../../config';
+
+interface CustomJwtPayload extends JwtPayload {
+  id: string;
+}
 
 export class AuthService {
   private mailerService;
@@ -61,8 +66,11 @@ export class AuthService {
     refreshToken: string,
   ): Promise<string | null> {
     try {
-      const payload = verifyToken(refreshToken, REFRESH_TOKEN_KEY as string);
-      const company = await Company.findById(payload);
+      const payload = verifyToken(
+        refreshToken,
+        REFRESH_TOKEN_KEY as string,
+      ) as CustomJwtPayload;
+      const company = await Company.findById(payload.id);
 
       if (!company || company.refreshToken !== refreshToken) {
         return null;

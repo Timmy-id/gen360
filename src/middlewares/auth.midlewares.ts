@@ -6,7 +6,7 @@ export const auth = (req: Request, _res: Response, next: NextFunction) => {
   const accessToken = req.cookies.accessToken;
 
   if (!accessToken) {
-    throw new AppError(401, 'Invalid access token');
+    throw new AppError(401, 'No access token');
   }
 
   try {
